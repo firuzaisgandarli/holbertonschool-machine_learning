@@ -18,7 +18,7 @@ def change_scale():
     y = np.exp((r / t) * x)
     plt.figure(figsize=(6.4, 4.8))
 
-    # Plot line
+    # Plot line graph
     plt.plot(x, y, 'b-')
 
     # Labels and title
@@ -29,7 +29,7 @@ def change_scale():
     # Logarithmic scale for y-axis
     plt.yscale("log")
 
-    # Set x-axis range
+    # Set x-axis range exactly from 0 to 28650
     plt.xlim(0, 28650)
 
     # Show plot
