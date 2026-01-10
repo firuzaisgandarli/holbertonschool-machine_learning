@@ -12,14 +12,16 @@ def change_scale():
     """
     Plot exponential decay of C-14 with logarithmic y-axis.
     """
+    # x values: 0 to 28650 in steps of 5730
     x = np.arange(0, 28651, 5730)
     r = np.log(0.5)
     t = 5730
     y = np.exp((r / t) * x)
+
     plt.figure(figsize=(6.4, 4.8))
 
-    # Plot line graph
-    plt.plot(x, y, 'b-')
+    # Plot line graph (default solid line)
+    plt.plot(x, y)
 
     # Labels and title
     plt.xlabel("Time (years)")
