@@ -28,8 +28,5 @@ def frequency():
     plt.ylabel("Number of Students")
     plt.title("Project A")
 
-    # Optional: limit x-axis to 0–100 for cleaner binning
-    plt.xlim(0, 100)
-
     # Show plot
     plt.show()
