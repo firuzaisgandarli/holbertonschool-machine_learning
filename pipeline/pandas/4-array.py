@@ -5,8 +5,6 @@ the last 10 rows of specific DataFrame columns
 into a NumPy ndarray.
 """
 
-import pandas as pd
-
 
 def array(df):
     """
