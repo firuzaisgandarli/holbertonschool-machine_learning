@@ -31,9 +31,18 @@ def bars():
 
     # Stacked bars in the order of rows: apples, bananas, oranges, peaches
     plt.bar(x, apples, width=0.5, color='red', label='apples')
-    plt.bar(x, bananas, width=0.5, color='yellow', bottom=apples, label='bananas')
-    plt.bar(x, oranges, width=0.5, color='#ff8000', bottom=apples + bananas, label='oranges')
-    plt.bar(x, peaches, width=0.5, color='#ffe5b4', bottom=apples + bananas + oranges, label='peaches')
+    plt.bar(
+        x, bananas, width=0.5, color='yellow',
+        bottom=apples, label='bananas'
+    )
+    plt.bar(
+        x, oranges, width=0.5, color='#ff8000',
+        bottom=apples + bananas, label='oranges'
+    )
+    plt.bar(
+        x, peaches, width=0.5, color='#ffe5b4',
+        bottom=apples + bananas + oranges, label='peaches'
+    )
 
     # X ticks per person
     plt.xticks(x, people)
