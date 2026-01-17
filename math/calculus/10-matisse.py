@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+Module 10-matisse
+Provides a function to compute the derivative of a polynomial
+represented as a list of coefficients.
+"""
+
 def poly_derivative(poly):
     """
     Calculate the derivative of a polynomial.
