@@ -5,6 +5,7 @@ Provides a function to compute the indefinite integral of a polynomial
 represented as a list of coefficients.
 """
 
+
 def poly_integral(poly):
     """
     Calculate the indefinite integral of a polynomial.
