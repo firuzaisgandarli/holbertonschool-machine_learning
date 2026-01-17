@@ -5,6 +5,7 @@ Provides a function to compute the derivative of a polynomial
 represented as a list of coefficients.
 """
 
+
 def poly_derivative(poly):
     """
     Calculate the derivative of a polynomial.
