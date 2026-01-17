@@ -4,7 +4,8 @@ def poly_derivative(poly):
     Calculate the derivative of a polynomial.
 
     Args:
-        poly (list): list of coefficients, where poly[i] is the coefficient for x^i
+        poly (list): list of coefficients,
+                     where poly[i] is the coefficient for x^i
 
     Returns:
         list: coefficients of the derivative polynomial
