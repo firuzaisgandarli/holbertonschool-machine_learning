@@ -26,7 +26,7 @@ def minor(matrix):
     if n == 0 or any(len(row) != n for row in matrix):
         raise ValueError("matrix must be a non-empty square matrix")
 
-    from 0-determinant import determinant
+    determinant = __import__('0-determinant').determinant
 
     if n == 1:
         return [[1]]
