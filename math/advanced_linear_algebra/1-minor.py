@@ -20,11 +20,15 @@ def minor(matrix):
     """
     if not isinstance(matrix, list) or \
        any(not isinstance(row, list) for row in matrix):
-        raise TypeError("matrix must be a list of lists")
+        raise TypeError(
+            "matrix must be a list of lists"
+        )
 
     n = len(matrix)
     if n == 0 or any(len(row) != n for row in matrix):
-        raise ValueError("matrix must be a non-empty square matrix")
+        raise ValueError(
+            "matrix must be a non-empty square matrix"
+        )
 
     determinant = __import__('0-determinant').determinant
 
