@@ -24,7 +24,9 @@ def adjugate(matrix):
 
     n = len(matrix)
     if n == 0 or any(len(row) != n for row in matrix):
-        raise ValueError("matrix must be a non-empty square matrix")
+        raise ValueError(
+            "matrix must be a non-empty square matrix"
+        )
 
     def determinant(m):
         """Helper function to calculate determinant."""
