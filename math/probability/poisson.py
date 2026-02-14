@@ -51,3 +51,28 @@ class Poisson:
             fact *= i
 
         return ((e ** (-self.lambtha)) * (self.lambtha ** k)) / fact
+
+    def cdf(self, k):
+        """
+        Calculates the CDF for a given number of successes
+
+        Parameters:
+        - k: number of successes
+
+        Returns:
+        - CDF value for k
+        """
+        if not isinstance(k, int):
+            k = int(k)
+        if k < 0:
+            return 0
+
+        cumulative = 0
+        for i in range(0, k + 1):
+            # factorial calculation
+            fact = 1
+            for j in range(1, i + 1):
+                fact *= j
+            cumulative += ((e ** (-self.lambtha)) * (self.lambtha ** i)) / fact
+
+        return cumulative
