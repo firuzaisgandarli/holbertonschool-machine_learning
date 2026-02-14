@@ -3,6 +3,8 @@
 Poisson distribution module
 """
 
+e = 2.7182818285
+
 
 class Poisson:
     """
@@ -27,3 +29,25 @@ class Poisson:
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
             self.lambtha = float(sum(data) / len(data))
+
+    def pmf(self, k):
+        """
+        Calculates the PMF for a given number of successes
+
+        Parameters:
+        - k: number of successes
+
+        Returns:
+        - PMF value for k
+        """
+        if not isinstance(k, int):
+            k = int(k)
+        if k < 0:
+            return 0
+
+        # factorial calculation without imports
+        fact = 1
+        for i in range(1, k + 1):
+            fact *= i
+
+        return ((e ** (-self.lambtha)) * (self.lambtha ** k)) / fact
