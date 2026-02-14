@@ -17,17 +17,9 @@ class Normal:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-
-            n = len(data)
-            mean_value = sum(data) / n
-
-            variance = 0
-            for x in data:
-                variance += (x - mean_value) ** 2
-            variance /= n
-
-            self.mean = float(mean_value)
-            self.stddev = float(variance ** 0.5)
+            self.mean = sum(data) / len(data)
+            variance = sum((x - self.mean) ** 2 for x in data) / len(data)
+            self.stddev = variance ** 0.5
 
     def z_score(self, x):
         """Calculates the z-score of a given x-value"""
@@ -38,30 +30,26 @@ class Normal:
         return z * self.stddev + self.mean
 
     def pdf(self, x):
-        """Calculates the value of the PDF for a given x-value"""
+        """Calculates the PDF for a given x-value"""
         pi = 3.1415926536
         e = 2.7182818285
-        coefficient = 1 / (self.stddev * ((2 * pi) ** 0.5))
-        exponent = e ** (-0.5 * (((x - self.mean) / self.stddev) ** 2))
-        return coefficient * exponent
+        coef = 1 / (self.stddev * (2 * pi) ** 0.5)
+        exponent = -0.5 * ((x - self.mean) / self.stddev) ** 2
+        return coef * (e ** exponent)
 
     def cdf(self, x):
-        """Calculates the value of the CDF for a given x-value"""
+        """Calculates the CDF for a given x-value"""
+        pi = 3.1415926536
         e = 2.7182818285
-
         z = (x - self.mean) / (self.stddev * (2 ** 0.5))
-
-        # Abramowitz and Stegun formula 7.1.26 for erf approximation
         t = 1 / (1 + 0.3275911 * abs(z))
         a1 = 0.254829592
         a2 = -0.284496736
         a3 = 1.421413741
         a4 = -1.453152027
         a5 = 1.061405429
-
-        erf_approx = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * (e ** (-z * z))
-
+        erf_approx = 1 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) *
+                          t * (e ** (-z * z)))
         if z < 0:
             erf_approx = -erf_approx
-
         return 0.5 * (1 + erf_approx)
