@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Likelihood module"""
+"""Likelihood module for binomial distribution"""
 
 
 import numpy as np
@@ -7,17 +7,16 @@ import numpy as np
 
 def likelihood(x, n, P):
     """
-    Calculates the likelihood of obtaining the data given
-    various hypothetical probabilities
+    Calculates the likelihood of obtaining the data (x successes
+    out of n trials) for various hypothetical probabilities.
 
     Parameters:
-    x (int): number of patients with severe side effects
-    n (int): total number of patients
+    x (int): number of observed successes
+    n (int): total number of trials
     P (numpy.ndarray): 1D array of hypothetical probabilities
 
     Returns:
-    numpy.ndarray: likelihood of obtaining x successes
-    out of n trials for each probability in P
+    numpy.ndarray: likelihood of the data for each probability in P
     """
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
@@ -36,8 +35,8 @@ def likelihood(x, n, P):
     if np.any((P < 0) | (P > 1)):
         raise ValueError("All values in P must be in the range [0, 1]")
 
-    factorial = np.math.factorial
-    comb = factorial(n) / (factorial(x) * factorial(n - x))
+    comb = np.math.factorial(n) / (
+        np.math.factorial(x) * np.math.factorial(n - x)
+    )
 
     return comb * (P ** x) * ((1 - P) ** (n - x))
-
