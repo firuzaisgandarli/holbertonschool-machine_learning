@@ -26,7 +26,8 @@ class Binomial:
             variance = sum((x - mean) ** 2 for x in data) / len(data)
 
             # Estimate n and p from mean and variance
-            n_est = round(mean ** 2 / (mean - variance) if mean != variance else 1)
+            n_est = round(mean ** 2 / (mean - variance)
+                          if mean != variance else 1)
             p_est = mean / n_est if n_est != 0 else 0
 
             self.n = n_est
@@ -38,7 +39,6 @@ class Binomial:
             return 0
         k = int(k)
 
-        # manual factorial
         def fact(x):
             result = 1
             for i in range(1, x + 1):
