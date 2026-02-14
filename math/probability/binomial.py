@@ -30,3 +30,19 @@ class Binomial:
             
             self.n = n_est
             self.p = p_est
+
+    def pmf(self, k):
+        """Calculates the PMF for a given number of successes"""
+        if k < 0 or k > self.n:
+            return 0
+        k = int(k)
+
+        # manual factorial
+        def fact(x):
+            result = 1
+            for i in range(1, x + 1):
+                result *= i
+            return result
+
+        comb = fact(self.n) / (fact(k) * fact(self.n - k))
+        return comb * (self.p ** k) * ((1 - self.p) ** (self.n - k))
