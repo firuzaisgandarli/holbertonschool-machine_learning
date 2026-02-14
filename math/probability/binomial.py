@@ -45,8 +45,9 @@ class Binomial:
                 result *= i
             return result
 
-        comb = (fact(self.n) / (fact(k) * fact(self.n - k)))
-        return comb * (self.p ** k) * ((1 - self.p) ** (self.n - k))
+        comb = fact(self.n) / (fact(k) * fact(self.n - k))
+        return (comb * (self.p ** k) *
+                ((1 - self.p) ** (self.n - k)))
 
     def cdf(self, k):
         """Calculates the CDF for a given number of successes"""
