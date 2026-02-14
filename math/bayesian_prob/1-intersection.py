@@ -2,13 +2,12 @@
 """Intersection module for Bayesian probability"""
 
 import numpy as np
-from 0-likelihood import likelihood
 
 
 def intersection(x, n, P, Pr):
     """
-    Calculates the intersection of the data with various hypothetical
-    probabilities and their prior beliefs.
+    Calculates the intersection of obtaining the data with
+    various hypothetical probabilities and their priors.
 
     Parameters:
     x (int): number of patients with severe side effects
@@ -53,8 +52,11 @@ def intersection(x, n, P, Pr):
     if not np.isclose(np.sum(Pr), 1):
         raise ValueError("Pr must sum to 1")
 
-    # Compute likelihood
-    L = likelihood(x, n, P)
+    # Compute likelihood (binomial formula)
+    comb = np.math.factorial(n) / (
+        np.math.factorial(x) * np.math.factorial(n - x)
+    )
+    L = comb * (P ** x) * ((1 - P) ** (n - x))
 
     # Intersection = likelihood * prior
     return L * Pr
