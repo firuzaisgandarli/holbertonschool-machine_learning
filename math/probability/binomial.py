@@ -54,7 +54,7 @@ class Binomial:
         if k < 0:
             return 0
         k = int(k)
-        cdf_sum = 0
+        total = 0
         for i in range(k + 1):
-            cdf_sum += self.pmf(i)
-        return cdf_sum
+            total += self.pmf(i)
+        return total
