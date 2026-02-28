@@ -59,3 +59,5 @@ class Decision_Tree:
         Returns the maximum depth of the tree
         """
         return self.root.max_depth_below()
+~                                                                                                                                                                                                                                        
+-- INSERT --                                                                                                                                                                                                           61,42         Alli
