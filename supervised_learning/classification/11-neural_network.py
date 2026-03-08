@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+11-neural_network.py
+
+This module defines a NeuralNetwork class with one hidden layer
+for binary classification using logistic regression.
+Includes methods for forward propagation and cost calculation.
+"""
 import numpy as np
 
 
