@@ -1,45 +1,44 @@
 #!/usr/bin/env python3
 """
-Module defines a DeepNeuralNetwork for binary classification
+Module to create a neural network
 """
 import numpy as np
 
 
 class DeepNeuralNetwork:
     """
-    Class that defines a deep neural network
+    A class that defines a neural network with one hidden layer performing
+    binary classification
     """
 
     def __init__(self, nx, layers):
         """
-        Class constructor
-        Args:
-            nx: number of input features
-            layers: list representing the number of nodes in each layer
+        class constructor
+        :param nx: is the number of input features to the neuron
+        :param layers: a list representing the number of nodes in each layer
         """
-        if not isinstance(nx, int):
+        if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-        if not isinstance(layers, list) or len(layers) == 0:
+        self.nx = nx
+        if type(layers) is not list or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-
+        # L is the number of layers in the neural network
         self.L = len(layers)
+        # cache is a dictionary to hold all intermediary values of the network
         self.cache = {}
-        self.weights = {}
-
-        for i in range(self.L):
-            if not isinstance(layers[i], int) or layers[i] <= 0:
+        # weights is a dictionary to hold all weighs and biased of the network
+        weights = {}
+        for i in range(len(layers)):
+            if layers[i] < 1:
                 raise TypeError("layers must be a list of positive integers")
-
-            # Layer indexing starts at 1
-            curr_layer = i + 1
-            # Previous size is nx for the first layer, else layers[i-1]
-            prev_size = nx if i == 0 else layers[i - 1]
-
-            # He et al. initialization: randn * sqrt(2 / size_of_previous_layer)
-            self.weights["W" + str(curr_layer)] = (
-                np.random.randn(layers[i], prev_size) * np.sqrt(2 / prev_size)
-            )
-            # Biases initialized to zeros
-            self.weights["b" + str(curr_layer)] = np.zeros((layers[i], 1))
+            key_w = 'W' + str(i + 1)
+            key_b = 'b' + str(i + 1)
+            if i == 0:
+                weights[key_w] = np.random.randn(layers[i], nx)*np.sqrt(2 / nx)
+            else:
+                weights[key_w] = np.random.randn(layers[i], layers[
+                    i-1]) * np.sqrt(2 / layers[i-1])
+            weights[key_b] = np.zeros((layers[i], 1))
+        self.weights = weights
