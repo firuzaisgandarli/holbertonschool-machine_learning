@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
-"""Deep Neural Network performing binary classification"""
+"""DeepNeuralNetwork module"""
 
 import numpy as np
 
 
 class DeepNeuralNetwork:
-    """Defines a deep neural network with multiple layers"""
+    """Deep Neural Network performing binary classification"""
 
     def __init__(self, nx, layers):
+        """Constructor for DeepNeuralNetwork
+        nx: number of input features
+        layers: list containing number of nodes in each layer
+        """
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -22,12 +26,9 @@ class DeepNeuralNetwork:
         self.weights = {}
 
         for l in range(self.L):
-            if l == 0:
-                self.weights["W1"] = (np.random.randn(layers[l], nx) *
-                                      np.sqrt(2 / nx))
-            else:
-                self.weights["W{}".format(l + 1)] = (
-                    np.random.randn(layers[l], layers[l - 1]) *
-                    np.sqrt(2 / layers[l - 1])
-                )
-            self.weights["b{}".format(l + 1)] = np.zeros((layers[l], 1))
+            layer_size = layers[l]
+            prev_size = nx if l == 0 else layers[l - 1]
+            self.weights["W{}".format(l + 1)] = (
+                np.random.randn(layer_size, prev_size) * np.sqrt(2 / prev_size)
+            )
+            self.weights["b{}".format(l + 1)] = np.zeros((layer_size, 1))
