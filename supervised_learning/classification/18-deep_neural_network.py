@@ -1,87 +1,91 @@
 #!/usr/bin/env python3
 """
-Module that defines a deep neural network performing binary classification
-with forward propagation.
+Module to create a deep neural network
 """
-
 import numpy as np
 
 
 class DeepNeuralNetwork:
     """
-    Deep neural network performing binary classification.
-
-    Attributes:
-        __L (int): Number of layers in the network.
-        __cache (dict): Dictionary to store intermediate values.
-        __weights (dict): Dictionary to store weights and biases.
+    A class that defines a deep neural network with one hidden layer performing
+    binary classification
     """
 
     def __init__(self, nx, layers):
         """
-        Initialize the deep neural network.
-
-        Args:
-            nx (int): Number of input features.
-            layers (list): Number of nodes in each layer.
-
-        Raises:
-            TypeError: If nx is not an integer or layers not a list of positive integers.
-            ValueError: If nx < 1.
+        class constructor
+        :param nx: is the number of input features to the neuron
+        :param layers: a list representing the number of nodes in each layer
         """
-        if not isinstance(nx, int):
+        if type(nx) is not int:
             raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
-        if not isinstance(layers, list) or len(layers) == 0:
+        self.nx = nx
+        if type(layers) is not list or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-        if not all(isinstance(x, int) and x > 0 for x in layers):
-            raise TypeError("layers must be a list of positive integers")
-
+        # L is the number of layers in the neural network
         self.__L = len(layers)
+        # cache is a dictionary to hold all intermediary values of the network
         self.__cache = {}
-        self.__weights = {}
-
-        # Initialize weights and biases with He et al. method
-        for l in range(self.__L):
-            layer_size = layers[l]
-            prev_size = nx if l == 0 else layers[l - 1]
-            self.__weights[f"W{l + 1}"] = (np.random.randn(layer_size, prev_size) *
-                                           np.sqrt(2 / prev_size))
-            self.__weights[f"b{l + 1}"] = np.zeros((layer_size, 1))
-
-    @property
-    def L(self):
-        """Getter for the number of layers."""
-        return self.__L
-
-    @property
-    def cache(self):
-        """Getter for the cache dictionary."""
-        return self.__cache
-
-    @property
-    def weights(self):
-        """Getter for the weights dictionary."""
-        return self.__weights
+        # weights is a dictionary to hold all weighs and biased of the network
+        weights = {}
+        for i in range(len(layers)):
+            if layers[i] < 1:
+                raise TypeError("layers must be a list of positive integers")
+            key_w = 'W' + str(i + 1)
+            key_b = 'b' + str(i + 1)
+            if i == 0:
+                weights[key_w] = np.random.randn(layers[i], nx)*np.sqrt(2 / nx)
+            else:
+                weights[key_w] = np.random.randn(layers[i], layers[
+                    i-1]) * np.sqrt(2 / layers[i-1])
+            weights[key_b] = np.zeros((layers[i], 1))
+        self.__weights = weights
 
     def forward_prop(self, X):
         """
-        Calculates the forward propagation of the neural network.
-
-        Args:
-            X (numpy.ndarray): Input data of shape (nx, m)
-
-        Returns:
-            A (numpy.ndarray): Output of the neural network
-            cache (dict): Dictionary with all intermediary activated outputs
+        calculates the forward propagation of the deep neural network
+        :param X:np array with the input data of shape (nx, m)
+        :return: the output of the deep neural network and the cache,
+        where cache is the activated output of each layer
         """
+        # Input layer
         self.__cache['A0'] = X
-        for l in range(1, self.__L + 1):
-            W = self.__weights[f"W{l}"]
-            b = self.__weights[f"b{l}"]
-            A_prev = self.__cache[f"A{l - 1}"]
-            Z = np.matmul(W, A_prev) + b
-            A = 1 / (1 + np.exp(-Z))  # Sigmoid activation
-            self.__cache[f"A{l}"] = A
-        return A, self.__cache
+        # Hidden and output layer
+        for i in range(self.__L):
+            # create keys to access weights(W), biases(b) and store in cache
+            key_w = 'W' + str(i + 1)
+            key_b = 'b' + str(i + 1)
+            key_cache = 'A' + str(i + 1)
+            key_cache_last = 'A' + str(i)
+            # store activation in cache
+            output_Z = np.matmul(self.__weights[key_w], self.__cache[
+                key_cache_last]) + self.__weights[key_b]
+            output_A = 1 / (1 + np.exp(-output_Z))
+            self.__cache[key_cache] = output_A
+        return output_A, self.__cache
+
+    @property
+    def cache(self):
+        """
+        attribute getter for cache
+        :return: cache
+        """
+        return self.__cache
+
+    @property
+    def L(self):
+        """
+        attribute getter for L (number of layers)
+        :return: L
+        """
+        return self.__L
+
+    @property
+    def weights(self):
+        """
+        attribute getter for weights
+        :return: weights
+        """
+        return self.__weights
