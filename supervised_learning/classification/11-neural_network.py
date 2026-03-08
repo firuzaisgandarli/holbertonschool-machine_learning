@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 import numpy as np
 
+
 class NeuralNetwork:
-    """Neural network with one hidden layer performing binary classification."""
+    """Neural network with one hidden layer for binary classification."""
 
     def __init__(self, nx, nodes):
+        """Initialize the neural network.
+
+        Args:
+            nx (int): Number of input features.
+            nodes (int): Number of nodes in the hidden layer.
+        """
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
         if nx < 1:
@@ -48,16 +55,34 @@ class NeuralNetwork:
         return self.__A2
 
     def forward_prop(self, X):
-        """Forward propagation without loops."""
+        """Calculate forward propagation of the neural network.
+
+        Args:
+            X (np.ndarray): Input data of shape (nx, m).
+
+        Returns:
+            tuple: Activated outputs for hidden layer and output neuron.
+        """
         Z1 = np.dot(self.__W1, X) + self.__b1
-        self.__A1 = 1 / (1 + np.exp(-Z1))
+        self.__A1 = 1 / (1 + np.exp(-Z1))  # Sigmoid activation
+
         Z2 = np.dot(self.__W2, self.__A1) + self.__b2
-        self.__A2 = 1 / (1 + np.exp(-Z2))
+        self.__A2 = 1 / (1 + np.exp(-Z2))  # Sigmoid activation
+
         return self.__A1, self.__A2
 
     def cost(self, Y, A):
-        """Compute logistic regression cost."""
+        """Calculate cost using logistic regression.
+
+        Args:
+            Y (np.ndarray): Correct labels of shape (1, m).
+            A (np.ndarray): Activated output of shape (1, m).
+
+        Returns:
+            float: Cost.
+        """
         m = Y.shape[1]
-        # Use 1.0000001 - A to avoid log(0)
-        cost = -(1/m) * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        cost = -(1 / m) * np.sum(
+            Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
+        )
         return cost
