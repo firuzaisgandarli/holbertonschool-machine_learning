@@ -40,10 +40,10 @@ class Neuron:
 
     def forward_prop(self, X):
         """
-        Calculate the forward propagation of the neuron.
+        Calculate forward propagation of the neuron.
 
         Parameters:
-        X (numpy.ndarray): shape (nx, m) input data
+        X (numpy.ndarray): input data, shape (nx, m)
 
         Returns:
         numpy.ndarray: activated output
@@ -54,14 +54,14 @@ class Neuron:
 
     def cost(self, Y, A):
         """
-        Compute the cost using logistic regression.
+        Compute logistic regression cost.
 
         Parameters:
-        Y (numpy.ndarray): shape (1, m) correct labels
-        A (numpy.ndarray): shape (1, m) activated output
+        Y (numpy.ndarray): true labels
+        A (numpy.ndarray): activated output
 
         Returns:
-        float: logistic regression cost
+        float: cost
         """
         m = Y.shape[1]
         cost = -(1 / m) * np.sum(
@@ -71,12 +71,12 @@ class Neuron:
 
     def gradient_descent(self, X, Y, A, alpha=0.05):
         """
-        Perform one pass of gradient descent on the neuron.
+        Perform one pass of gradient descent.
 
         Parameters:
-        X (numpy.ndarray): shape (nx, m) input data
-        Y (numpy.ndarray): shape (1, m) correct labels
-        A (numpy.ndarray): shape (1, m) activated output
+        X (numpy.ndarray): input data
+        Y (numpy.ndarray): true labels
+        A (numpy.ndarray): activated output
         alpha (float): learning rate
         """
         m = Y.shape[1]
@@ -88,7 +88,7 @@ class Neuron:
 
     def evaluate(self, X, Y):
         """
-        Evaluate neuron predictions and compute cost.
+        Evaluate neuron predictions and cost.
 
         Parameters:
         X (numpy.ndarray): input data
@@ -100,16 +100,16 @@ class Neuron:
         A = self.forward_prop(X)
         cost = self.cost(Y, A)
         predictions = np.where(A >= 0.5, 1, 0)
-        return predictions, cost
+        return np.round(predictions, decimals=10), np.round(cost, decimals=10)
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
         """
         Train the neuron.
 
         Parameters:
-        X (numpy.ndarray): shape (nx, m) input data
-        Y (numpy.ndarray): shape (1, m) correct labels
-        iterations (int): number of iterations to train
+        X (numpy.ndarray): input data
+        Y (numpy.ndarray): true labels
+        iterations (int): number of iterations
         alpha (float): learning rate
 
         Returns:
