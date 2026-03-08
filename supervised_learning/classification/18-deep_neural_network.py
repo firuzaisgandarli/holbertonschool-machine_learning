@@ -42,6 +42,7 @@ class DeepNeuralNetwork:
         self.__cache = {}
         self.__weights = {}
 
+        # Initialize weights and biases with He et al. method
         for l in range(self.__L):
             layer_size = layers[l]
             prev_size = nx if l == 0 else layers[l - 1]
