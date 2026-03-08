@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Neural Network with one hidden layer performing binary classification"""
+
 import numpy as np
 
 
 class NeuralNetwork:
     """Defines a neural network with one hidden layer"""
+
     def __init__(self, nx, nodes):
         if not isinstance(nx, int):
             raise TypeError("nx must be an integer")
@@ -15,9 +17,11 @@ class NeuralNetwork:
         if nodes < 1:
             raise ValueError("nodes must be a positive integer")
 
+        # Hidden layer
         self.__W1 = np.random.randn(nodes, nx)
         self.__b1 = np.zeros((nodes, 1))
         self.__A1 = 0
+        # Output neuron
         self.__W2 = np.random.randn(1, nodes)
         self.__b2 = 0
         self.__A2 = 0
@@ -55,25 +59,24 @@ class NeuralNetwork:
         return self.__A1, self.__A2
 
     def cost(self, Y, A):
-        """Calculates cost using logistic regression"""
+        """Calculates the cost using logistic regression"""
         m = Y.shape[1]
-        cost = -(1 / m) * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
+        cost = -np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)) / m
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates the neural network's predictions"""
+        """Evaluates the predictions and computes cost"""
         self.forward_prop(X)
-        predictions = np.where(self.__A2 >= 0.5, 1, 0)
+        A2 = np.where(self.__A2 >= 0.5, 1, 0)
         cost = self.cost(Y, self.__A2)
-        return predictions, cost
+        return A2, cost
 
     def gradient_descent(self, X, Y, A1, A2, alpha=0.05):
-        """Performs one pass of gradient descent on the neural network"""
+        """Performs one pass of gradient descent"""
         m = Y.shape[1]
         dZ2 = A2 - Y
         dW2 = np.dot(dZ2, A1.T) / m
         db2 = np.sum(dZ2, axis=1, keepdims=True) / m
-
         dZ1 = np.dot(self.__W2.T, dZ2) * A1 * (1 - A1)
         dW1 = np.dot(dZ1, X.T) / m
         db1 = np.sum(dZ1, axis=1, keepdims=True) / m
@@ -96,6 +99,7 @@ class NeuralNetwork:
 
         for i in range(iterations):
             A1, A2 = self.forward_prop(X)
-            self.gradient_descent(X, Y, A1, A2, alpha)
+            self.gradient_descent(X, Y, A1, A2,
+                                  alpha)
 
         return self.evaluate(X, Y)
