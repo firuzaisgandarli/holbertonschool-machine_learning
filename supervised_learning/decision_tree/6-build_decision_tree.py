@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Decision Tree implementation with predict function"""
+"""Decision Tree implementation with safe predict"""
 
 import numpy as np
 
 
 class Node:
-    """Class representing an internal node"""
+    """Internal node"""
 
-    def __init__(self, feature=None, threshold=None, left_child=None,
-                 right_child=None, depth=0, is_root=False):
-        """Initialize node"""
+    def __init__(self, feature=None, threshold=None,
+                 left_child=None, right_child=None,
+                 depth=0, is_root=False):
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -21,7 +21,7 @@ class Node:
         self.upper = {}
 
     def get_leaves_below(self):
-        """Return all leaves under node"""
+        """Get all leaves"""
         leaves = []
         if self.left_child:
             leaves.extend(self.left_child.get_leaves_below())
@@ -37,35 +37,33 @@ class Node:
 
 
 class Leaf(Node):
-    """Class representing a leaf"""
+    """Leaf node"""
 
     def __init__(self, value, depth=0):
-        """Initialize leaf"""
         super().__init__(depth=depth)
         self.value = value
         self.is_leaf = True
         self.indicator = None
 
     def __str__(self):
-        """String representation"""
         return "-> leaf [value={}]".format(self.value)
 
     def get_leaves_below(self):
-        """Return itself"""
         return [self]
 
     def pred(self, x):
-        """Return value"""
         return self.value
 
     def update_indicator(self):
-        """Create indicator function"""
+        """Safe indicator (NO KeyError)"""
         lower = self.lower
         upper = self.upper
 
         def indicator(x):
-            for i in lower:
-                if x[i] <= lower[i] or x[i] > upper[i]:
+            for i in set(list(lower.keys()) + list(upper.keys())):
+                if x[i] <= lower.get(i, -np.inf):
+                    return 0
+                if x[i] > upper.get(i, np.inf):
                     return 0
             return 1
 
@@ -73,23 +71,24 @@ class Leaf(Node):
 
 
 class Decision_Tree:
-    """Decision Tree class"""
+    """Decision Tree"""
 
     def __init__(self, root=None):
-        """Initialize tree"""
         self.root = root
         self.predict = None
 
     def get_leaves(self):
-        """Return all leaves"""
         return self.root.get_leaves_below()
 
     def pred(self, x):
-        """Recursive prediction"""
         return self.root.pred(x)
 
     def update_bounds(self):
-        """Update bounds for all nodes"""
+        """Update bounds safely"""
+
+        # VERY IMPORTANT
+        self.root.lower = {}
+        self.root.upper = {}
 
         def recurse(node):
             if node.is_leaf:
@@ -98,10 +97,12 @@ class Decision_Tree:
             feat = node.feature
             thr = node.threshold
 
+            # Left child
             node.left_child.lower = node.lower.copy()
             node.left_child.upper = node.upper.copy()
             node.left_child.lower[feat] = thr
 
+            # Right child
             node.right_child.lower = node.lower.copy()
             node.right_child.upper = node.upper.copy()
             node.right_child.upper[feat] = thr
@@ -112,14 +113,15 @@ class Decision_Tree:
         recurse(self.root)
 
     def update_predict(self):
-        """Create efficient predict function"""
+        """Efficient predict"""
+
         self.update_bounds()
         leaves = self.get_leaves()
 
         for leaf in leaves:
             leaf.update_indicator()
 
-        self.predict = lambda A: np.array(
-            [sum(leaf.indicator(x) * leaf.value for leaf in leaves)
-             for x in A]
-        )
+        self.predict = lambda A: np.array([
+            sum(leaf.indicator(x) * leaf.value for leaf in leaves)
+            for x in A
+        ])
