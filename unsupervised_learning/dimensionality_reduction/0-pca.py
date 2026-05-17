@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module for Principal Component Analysis."""
+"""PCA module."""
 
 import numpy as np
 
@@ -15,12 +15,13 @@ def pca(X, var=0.95):
     Returns:
         numpy.ndarray: Weights matrix W of shape (d, nd).
     """
-    U, S, Vt = np.linalg.svd(X)
+    U, S, Vt = np.linalg.svd(X, full_matrices=False)
 
-    variances = S ** 2
-    cumulative_variance = np.cumsum(variances) / np.sum(variances)
+    eig_vals = S ** 2
+    total = np.sum(eig_vals)
+    cumulative = np.cumsum(eig_vals) / total
 
-    nd = np.argmax(cumulative_variance >= var) + 1
+    nd = np.where(cumulative >= var)[0][0] + 1
 
     W = Vt[:nd].T
 
