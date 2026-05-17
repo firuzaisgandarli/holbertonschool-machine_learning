@@ -1,25 +1,27 @@
-"""Dimensionality Reduction algorithms implementations."""
+#!/usr/bin/env python3
+"""Module for Principal Component Analysis."""
+
 import numpy as np
 
 
 def pca(X, var=0.95):
     """
-    Compute the PCA, to get var% of the var explain
-    :param X: The X to decompose
-    :param var: The var threshold
-    :return: THe W matrix
+    Performs PCA on a dataset.
+
+    Args:
+        X (numpy.ndarray): Dataset of shape (n, d), centered around 0.
+        var (float): Fraction of variance to maintain.
+
+    Returns:
+        numpy.ndarray: Weights matrix W of shape (d, nd).
     """
     U, S, Vt = np.linalg.svd(X)
 
-    total_var_explain = 0
-    idx = 0
+    variances = S ** 2
+    cumulative_variance = np.cumsum(variances) / np.sum(variances)
 
-    normal_S = S / np.sum(S)
+    nd = np.argmax(cumulative_variance >= var) + 1
 
-    for var_explain in normal_S:
-        total_var_explain += var_explain
-        idx += 1
-        if total_var_explain >= var:
-            break
+    W = Vt[:nd].T
 
-    return Vt.T[..., :idx]
+    return W
