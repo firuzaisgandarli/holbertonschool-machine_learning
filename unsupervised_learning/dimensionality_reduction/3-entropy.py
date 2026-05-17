@@ -10,25 +10,16 @@ def HP(Di, beta):
 
     Args:
         Di (numpy.ndarray): shape (n - 1,) distances
-        beta (numpy.ndarray): shape (1,) precision
+        beta (numpy.ndarray): shape (1,) beta value
 
     Returns:
-        Hi (float): Shannon entropy
-        Pi (numpy.ndarray): P affinities
+        tuple: Shannon entropy Hi and P affinities Pi
     """
-    # Compute P affinities
     Pi = np.exp(-Di * beta)
-
-    # Avoid division by zero
     sum_Pi = np.sum(Pi)
-    if sum_Pi == 0:
-        Pi = np.zeros_like(Pi)
-        Hi = 0
-        return Hi, Pi
 
     Pi = Pi / sum_Pi
 
-    # Compute entropy
-    Hi = -np.sum(Pi * np.log2(Pi + 1e-10))
+    Hi = -np.sum(Pi * np.log2(Pi))
 
     return Hi, Pi
