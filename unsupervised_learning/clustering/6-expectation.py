@@ -5,7 +5,7 @@ pdf = __import__('5-pdf').pdf
 
 def expectation(X, pi, m, S):
     """
-    Performs the expectation step in the EM algorithm.
+    E-step of GMM (fully vectorized).
     """
 
     if not isinstance(X, np.ndarray) or len(X.shape) != 2:
@@ -23,22 +23,21 @@ def expectation(X, pi, m, S):
     if m.shape != (k, d) or S.shape != (k, d, d):
         return None, None
 
-    # Compute likelihoods P(x | cluster j) for all clusters
-    P = np.zeros((k, n))
+    # compute pdf for each cluster (k, n)
+    P = np.array([pdf(X, m[j], S[j]) for j in range(k)])
 
-    for j in range(k):  # allowed only loop
-        P[j] = pdf(X, m[j], S[j]) * pi[j]
+    # multiply by priors
+    P = P * pi[:, np.newaxis]
 
-    # Total likelihood per data point
+    # total probability per point
     total = np.sum(P, axis=0)
 
-    # Avoid division by zero
     total = np.clip(total, 1e-300, None)
 
-    # Responsibilities (posterior probabilities)
+    # responsibilities
     g = P / total
 
-    # log-likelihood
+    # log likelihood
     l = np.sum(np.log(total))
 
     return g, l
