@@ -3,7 +3,6 @@ import numpy as np
 
 
 def initialize(X, k):
-    """Initialize centroids (from task 0)"""
     if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None
     if not isinstance(k, int) or k <= 0:
@@ -16,14 +15,6 @@ def initialize(X, k):
 
 
 def kmeans(X, k, iterations=1000):
-    """
-    Performs K-means clustering
-
-    Returns:
-        C: centroids (k, d)
-        clss: cluster assignment (n,)
-    """
-
     if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None
     if not isinstance(k, int) or k <= 0:
@@ -33,7 +24,6 @@ def kmeans(X, k, iterations=1000):
 
     n, d = X.shape
 
-    # initialize centroids
     C = initialize(X, k)
     if C is None:
         return None, None
@@ -42,24 +32,18 @@ def kmeans(X, k, iterations=1000):
 
     for _ in range(iterations):
 
-        # distance computation (vectorized)
-        distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
+        distances = np.linalg.norm(X[:, None] - C, axis=2)
         new_clss = np.argmin(distances, axis=1)
 
-        # stop if no change
-        if np.array_equal(new_clss, clss):
-            break
-
+        # NOTE: NO early break here (important fix)
         clss = new_clss
 
-        # update centroids
         new_C = np.zeros((k, d))
 
-        for i in range(k):  # allowed second loop
+        for i in range(k):
             points = X[clss == i]
 
             if len(points) == 0:
-                # reinitialize empty cluster
                 new_C[i] = np.random.uniform(X.min(axis=0), X.max(axis=0))
             else:
                 new_C[i] = points.mean(axis=0)
