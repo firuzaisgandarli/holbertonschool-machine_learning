@@ -10,8 +10,9 @@ class NST:
 
     def __init__(self, style_image, content_image, alpha=1e4, beta=1):
         """
-        Constructor
+        Class constructor
         """
+
         if not isinstance(style_image, np.ndarray) or style_image.shape[-1] != 3:
             raise TypeError(
                 "style_image must be a numpy.ndarray with shape (h, w, 3)"
@@ -31,10 +32,11 @@ class NST:
         self.alpha = alpha
         self.beta = beta
 
-        # Preprocess images (important: float conversion)
+        # convert to float32
         style_image = style_image.astype("float32")
         content_image = content_image.astype("float32")
 
+        # preprocess
         self.style_image = tf.keras.applications.vgg19.preprocess_input(
             style_image * 255
         )
@@ -42,57 +44,56 @@ class NST:
             content_image * 255
         )
 
-        # Load VGG19 model
-        vgg = tf.keras.applications.VGG19(include_top=False, weights="imagenet")
-
+        # Load VGG19
+        vgg = tf.keras.applications.VGG19(
+            include_top=False,
+            weights="imagenet"
+        )
         vgg.trainable = False
 
-        # Style layers (as required by Holberton project)
-        style_layers = [
+        # Required layers
+        self.style_layers = [
             "block1_conv1",
             "block2_conv1",
             "block3_conv1",
             "block4_conv1",
             "block5_conv1",
         ]
-
-        # Content layer
-        content_layer = "block5_conv2"
+        self.content_layer = "block5_conv2"
 
         outputs = [
-            vgg.get_layer(name).output for name in style_layers + [content_layer]
+            vgg.get_layer(name).output for name in self.style_layers + [self.content_layer]
         ]
 
         self.model = tf.keras.Model([vgg.input], outputs)
 
-        self.style_layers = style_layers
-        self.content_layer = content_layer
-
-        # Extract features immediately
+        # extract features immediately
         self.generate_features()
 
     def gram_matrix(self, input_tensor):
-        """Computes Gram matrix"""
+        """
+        Computes Gram matrix
+        """
         result = tf.linalg.einsum("bijc,bijd->bcd", input_tensor, input_tensor)
-        input_shape = tf.shape(input_tensor)
-        num_locations = tf.cast(
-            input_shape[1] * input_shape[2], tf.float32
-        )
+
+        h, w = tf.shape(input_tensor)[1], tf.shape(input_tensor)[2]
+        num_locations = tf.cast(h * w, tf.float32)
+
         return result / num_locations
 
     def generate_features(self):
         """
         Extract style and content features
         """
-        outputs = self.model(
-            tf.convert_to_tensor(self.style_image[tf.newaxis, ...])
-        )
+
+        style_input = tf.convert_to_tensor(self.style_image[tf.newaxis, ...])
+        outputs = self.model(style_input)
 
         style_outputs = outputs[:-1]
         content_output = outputs[-1]
 
         self.gram_style_features = [
-            self.gram_matrix(style_output) for style_output in style_outputs
+            self.gram_matrix(style) for style in style_outputs
         ]
 
         self.content_feature = content_output
